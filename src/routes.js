@@ -26,7 +26,11 @@ function RootStack() {
         component={Main}
         options={{ title: 'Usuários' }}
       />
-      <Stack.Screen name="User" component={User} />
+      <Stack.Screen
+        name="User"
+        component={User}
+        options={User.navigationOptions}
+      />
     </Stack.Navigator>
   );
 }
