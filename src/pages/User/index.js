@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { ActivityIndicator } from 'react-native';
 import api from '../../services/api';
 
 import {
@@ -14,6 +15,7 @@ import {
   Info,
   Title,
   Author,
+  Loading,
 } from './styles';
 
 export default class User extends Component {
@@ -29,16 +31,46 @@ export default class User extends Component {
 
   state = {
     stars: [],
+    loading: false,
+    page: 1,
+    final: false,
   };
 
   async componentDidMount() {
+    this.loadStarred();
+  }
+
+  loadStarred = async () => {
+    const { stars, page, final, loading } = this.state;
+
+    if (final || loading) return;
+
+    this.setState({ loading: true });
+
     const { route } = this.props;
     const user = route.params?.user;
 
-    const response = await api.get(`/users/${user.login}/starred`);
+    const response = await api.get(`/users/${user.login}/starred`, {
+      params: { page },
+    });
 
-    this.setState({ stars: response.data });
-  }
+    await this.setState({
+      stars: [...stars, ...response.data],
+      loading: false,
+      page: page + 1,
+      final: !response.data.length,
+    });
+  };
+
+  renderFooter = () => {
+    const { loading } = this.state;
+    if (!loading) return null;
+    return (
+      <Loading>
+        <ActivityIndicator color="#7159c1" size={30} />
+      </Loading>
+    );
+  };
 
   render() {
     const { route } = this.props;
@@ -54,6 +86,8 @@ export default class User extends Component {
         </Header>
 
         <Stars
+          onEndReachedThreshold={0.2} // Carrega mais itens quando chegar em 20% do fim
+          onEndReached={this.loadStarred} // Função que carrega mais itens
           data={stars}
           keyExtractor={star => String(star.id)}
           renderItem={({ item }) => (
@@ -65,6 +99,7 @@ export default class User extends Component {
               </Info>
             </Starred>
           )}
+          ListFooterComponent={this.renderFooter}
         />
       </Container>
     );
