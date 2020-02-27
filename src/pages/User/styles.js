@@ -78,6 +78,7 @@ export const Author = styled.Text`
 
 export const Loading = styled.View`
   flex: 1;
+  margin: 15px 0;
   justify-content: center;
   align-items: center;
 `;
