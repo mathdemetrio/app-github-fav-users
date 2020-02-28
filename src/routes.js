@@ -4,6 +4,7 @@ import React from 'react';
 
 import Main from './pages/Main';
 import User from './pages/User';
+import Webview from './pages/Webview';
 
 const Stack = createStackNavigator();
 
@@ -30,6 +31,11 @@ function RootStack() {
         name="User"
         component={User}
         options={User.navigationOptions}
+      />
+      <Stack.Screen
+        name="Webview"
+        component={Webview}
+        options={Webview.navigationOptions}
       />
     </Stack.Navigator>
   );

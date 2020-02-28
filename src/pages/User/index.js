@@ -27,6 +27,9 @@ export default class User extends Component {
     route: PropTypes.shape({
       params: PropTypes.shape({}),
     }).isRequired,
+    navigation: PropTypes.shape({
+      navigate: PropTypes.func,
+    }).isRequired,
   };
 
   state = {
@@ -88,6 +91,11 @@ export default class User extends Component {
     );
   };
 
+  handleNavigation = repo => {
+    const { navigation } = this.props;
+    navigation.navigate('Webview', { repo });
+  };
+
   render() {
     const { route } = this.props;
     const { stars, refreshing } = this.state;
@@ -109,7 +117,7 @@ export default class User extends Component {
           data={stars}
           keyExtractor={star => String(star.id)}
           renderItem={({ item }) => (
-            <Starred>
+            <Starred onPress={() => this.handleNavigation(item)}>
               <OwnerAvatar source={{ uri: item.owner.avatar_url }} />
               <Info>
                 <Title>{item.name}</Title>
